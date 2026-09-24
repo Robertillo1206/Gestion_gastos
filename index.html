@@ -140,7 +140,7 @@
             </div>
         </section>
 
-        <!-- SECCIÓN 2: SUSCRIPCIONES Y RECURRENTES (NUEVA SECCIÓN) -->
+        <!-- SECCIÓN 2: SUSCRIPCIONES Y RECURRENTES -->
         <section class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 sm:p-5 mb-6 backdrop-blur-md">
             <div class="flex justify-between items-center cursor-pointer" onclick="toggleSubscriptionsPanel()">
                 <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -313,9 +313,10 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC CON CLAVE DE ALMACENAMIENTO UNIFICADA Y SEGURA -->
     <script>
-        const DEFAULT_TRANSACTIONS = [];
+        // CLAVE DE ALMACENAMIENTO PERMANENTE
+        const STORAGE_KEY = 'finances_app_data_v1';
 
         const CATEGORY_ICONS = {
             suscripciones: 'tv',
@@ -351,11 +352,28 @@
 
         window.onload = function() {
             lucide.createIcons();
+            loadAndMigrateData();
+            processRecurringTransactions();
 
-            const saved = localStorage.getItem('finances_v4_recurring');
+            document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
+            renderApp();
+        };
+
+        function loadAndMigrateData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 try {
-                    transactions = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
+                    transactions = parsed.map(item => ({
+                        id: item.id || Date.now().toString() + Math.random().toString(36).substr(2, 4),
+                        concept: item.concept || 'Movimiento sin nombre',
+                        amount: parseFloat(item.amount) || 0,
+                        category: item.category || 'otros',
+                        date: item.date || new Date().toISOString().split('T')[0],
+                        type: item.type || 'expense',
+                        isRecurring: !!item.isRecurring,
+                        recurringParentId: item.recurringParentId || null
+                    }));
                 } catch(e) {
                     transactions = [];
                 }
@@ -363,21 +381,15 @@
                 transactions = [];
                 saveToLocalStorage();
             }
-
-            processRecurringTransactions();
-
-            document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
-            renderApp();
-        };
-
-        function saveToLocalStorage() {
-            localStorage.setItem('finances_v4_recurring', JSON.stringify(transactions));
         }
 
-        // Procesa la repetición automática mensual de suscripciones
+        function saveToLocalStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+        }
+
         function processRecurringTransactions() {
             const today = new Date();
-            const currentMonth = today.toISOString().slice(0, 7); // "YYYY-MM"
+            const currentMonth = today.toISOString().slice(0, 7);
 
             const recurrings = transactions.filter(t => t.isRecurring);
 
@@ -386,7 +398,6 @@
                 const itemDay = String(itemDate.getDate()).padStart(2, '0');
                 const targetDate = `${currentMonth}-${itemDay}`;
 
-                // Verificar si ya existe este movimiento creado para este mes
                 const alreadyExists = transactions.some(t => 
                     t.recurringParentId === item.id && t.date.startsWith(currentMonth)
                 );
@@ -701,7 +712,7 @@
                 transactions = transactions.map(t => t.id === editId ? { id: editId, concept, amount, category, date, type, isRecurring } : t);
             } else {
                 const newTransaction = {
-                    id: Date.now().toString(),
+                    id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
                     concept,
                     amount,
                     category,
@@ -767,7 +778,7 @@
         }
 
         function confirmReset() {
-            if (confirm("¿Deseas eliminar todos los registros guardados?")) {
+            if (confirm("¿Deseas eliminar todos los registros guardados de forma permanente?")) {
                 transactions = [];
                 saveToLocalStorage();
                 renderApp();
