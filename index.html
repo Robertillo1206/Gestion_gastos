@@ -2,19 +2,15 @@
 <html lang="es" class="h-full bg-slate-950">
 <head>
     <meta charset="UTF-8">
-    <!-- Bloqueo absoluto de zoom y escala fija en dispositivos móviles -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimum-scale=1.0">
     <title>Gestor de Finanzas Personal</title>
-    
-    <!-- Favicon -->
+    <!-- Icono para navegador y dispositivos móviles -->
     <link rel="icon" type="image/png" href="IMG_9781.png">
     <link rel="apple-touch-icon" href="IMG_9781.png">
-
-    <!-- Librerías Externas: Tailwind CSS, Lucide Icons e Inter/Plus Jakarta Sans -->
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <script>
         tailwind.config = {
             theme: {
@@ -26,18 +22,15 @@
             }
         }
     </script>
-
     <style>
-        /* Desactivar completamente gestos de zoom, selección e iteración de doble toque */
+        /* Desactivar gestos de zoom y fijar pantalla */
         html, body {
             touch-action: manipulation;
             -webkit-text-size-adjust: 100%;
             overscroll-behavior: none;
-            user-select: none;
-            -webkit-user-select: none;
         }
 
-        /* Estilos visuales dinámicos para el balance de la tarjeta */
+        /* Estilos visuales personalizados */
         .card-positive {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(99, 102, 241, 0.15) 50%, rgba(15, 23, 42, 0.95) 100%), #0f172a;
             border: 1px solid rgba(16, 185, 129, 0.35);
@@ -70,14 +63,16 @@
 </head>
 <body class="h-full text-slate-100 font-sans antialiased bg-slate-950 flex flex-col min-h-screen select-none">
 
+    <!-- Elementos de iluminación ambiental -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div id="glow-bg-1" class="bg-glow absolute -top-40 -left-40 w-96 h-96 bg-indigo-600 rounded-full blur-[128px] opacity-20"></div>
         <div id="glow-bg-2" class="bg-glow absolute top-1/2 -right-40 w-96 h-96 bg-emerald-600 rounded-full blur-[128px] opacity-20"></div>
     </div>
 
-    <!-- Contenedor Principal -->
+    <!-- Contenedor Principal de la App -->
     <div class="relative z-10 flex-1 flex flex-col max-w-4xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
         
+        <!-- HEADER -->
         <header class="flex justify-between items-center mb-6">
             <div class="flex items-center space-x-3">
                 <div class="p-2.5 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl text-indigo-400">
@@ -100,29 +95,25 @@
             </div>
         </header>
 
+        <!-- SECCIÓN 1: TARJETA DE RESUMEN FINANCIERO -->
         <section class="mb-6">
             <div id="balance-card" class="card-positive relative overflow-hidden rounded-3xl p-6 sm:p-8 transition-all duration-500">
                 <div class="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
 
                 <div class="relative z-10 flex flex-col justify-between h-full space-y-6">
-                    <!-- Superior de la Tarjeta -->
                     <div class="flex justify-between items-center">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase">Estado del Balance</span>
-                        </div>
+                        <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase">Estado del Balance</span>
                         <div id="status-badge" class="px-3 py-1 rounded-full text-xs font-semibold tracking-wide flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                             Balance Positivo
                         </div>
                     </div>
 
-                    <!-- Saldo Total -->
                     <div>
                         <p class="text-xs font-medium text-slate-400 tracking-wider uppercase mb-1">Saldo Total Disponible</p>
                         <h2 id="total-balance" class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">0,00 €</h2>
                     </div>
 
-                    <!-- Desglose de Ingresos y Gastos -->
                     <div class="pt-4 border-t border-white/10 grid grid-cols-2 gap-4">
                         <div class="flex items-center space-x-3 bg-slate-950/40 p-3 rounded-2xl border border-white/5">
                             <div class="p-2 bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-emerald-400 flex-shrink-0">
@@ -149,6 +140,25 @@
             </div>
         </section>
 
+        <!-- SECCIÓN 2: SUSCRIPCIONES Y RECURRENTES (NUEVA SECCIÓN) -->
+        <section class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 sm:p-5 mb-6 backdrop-blur-md">
+            <div class="flex justify-between items-center cursor-pointer" onclick="toggleSubscriptionsPanel()">
+                <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="refresh-cw" class="w-4 h-4 text-indigo-400"></i>
+                    Suscripciones y Recurrentes
+                    <span id="recurring-count" class="ml-2 px-2 py-0.5 rounded-full text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">0 fijas</span>
+                </h3>
+                <i id="sub-chevron" data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
+            </div>
+
+            <div id="subscriptions-container" class="hidden mt-4 pt-3 border-t border-slate-800/80 space-y-2">
+                <div id="subscriptions-list" class="space-y-2">
+                    <!-- Rellenado por JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: DISTRIBUCIÓN POR CATEGORÍAS DE GASTOS -->
         <section class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 sm:p-5 mb-6 backdrop-blur-md">
             <div class="flex justify-between items-center mb-3">
                 <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -158,16 +168,16 @@
                 <span id="expenses-ratio-label" class="text-xs text-slate-400 font-medium">0% de ingresos consumidos</span>
             </div>
 
-            <!-- Gráfico de Distribución -->
             <div id="category-bar-container" class="w-full bg-slate-950 h-3 rounded-full overflow-hidden flex gap-0.5 p-0.5 border border-slate-800/80 mb-3">
                 <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center text-[10px] text-slate-500">Sin gastos aún</div>
             </div>
 
             <div id="category-legend" class="flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-400">
-                <!-- Leyendas generadas dinámicamente -->
+                <!-- Se genera dinámicamente -->
             </div>
         </section>
 
+        <!-- SECCIÓN 4: BARRA DE ACCIONES Y FILTROS -->
         <section class="mb-6 space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
                 <button onclick="openModal()" class="w-full sm:w-auto px-5 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-semibold rounded-2xl shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-95">
@@ -190,6 +200,7 @@
             </div>
         </section>
 
+        <!-- SECCIÓN 5: HISTORIAL DE MOVIMIENTOS -->
         <section class="flex-1 flex flex-col">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-bold text-slate-300 flex items-center gap-2 uppercase tracking-wider">
@@ -200,21 +211,21 @@
             </div>
 
             <div id="transactions-list" class="space-y-2.5 flex-1">
-                <!-- Lista vacía de inicio -->
+                <!-- Se rellena con JS -->
             </div>
 
-            <!-- Estado Vacío por Defecto -->
             <div id="empty-state" class="hidden flex-col items-center justify-center py-12 text-center bg-slate-900/40 border border-dashed border-slate-800/80 rounded-2xl my-2">
                 <div class="p-4 bg-slate-800/40 rounded-full text-slate-500 mb-3">
                     <i data-lucide="receipt" class="w-8 h-8"></i>
                 </div>
-                <p class="text-slate-300 font-medium">No hay ningún movimiento guardado</p>
-                <p class="text-xs text-slate-500 mt-1 max-w-xs">Haz clic en "Nuevo Movimiento" para empezar a registrar tus ingresos o gastos.</p>
+                <p class="text-slate-300 font-medium">No se encontraron movimientos</p>
+                <p class="text-xs text-slate-500 mt-1 max-w-xs">Añade un ingreso o gasto para empezar a seguir tus registros.</p>
             </div>
         </section>
 
     </div>
 
+    <!-- MODAL DE CREACIÓN / EDICIÓN DE MOVIMIENTOS -->
     <div id="modal-backdrop" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
         <div id="modal-container" class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl transform scale-95 transition-all duration-300">
             
@@ -231,7 +242,7 @@
             <form id="transaction-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
                 <input type="hidden" id="edit-id" value="">
 
-                <!-- Tipo -->
+                <!-- Selector de Tipo -->
                 <div class="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800">
                     <button type="button" id="btn-type-expense" onclick="setTransactionType('expense')" class="py-2.5 px-3 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all bg-red-500/20 text-red-400 border border-red-500/30">
                         <i data-lucide="arrow-down-right" class="w-4 h-4"></i> Gasto
@@ -245,10 +256,10 @@
                 <!-- Concepto -->
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Concepto / Descripción</label>
-                    <input type="text" id="input-concept" required placeholder="Ej. Compra, Nómina, Restaurante..." class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 text-sm text-slate-100 rounded-xl p-3 outline-none transition-all">
+                    <input type="text" id="input-concept" required placeholder="Ej. Netflix, Alquiler, Gimnasio, Nómina..." class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 text-sm text-slate-100 rounded-xl p-3 outline-none transition-all">
                 </div>
 
-                <!-- Monto y Categoría -->
+                <!-- Importe y Categoría -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1">Importe (€)</label>
@@ -257,23 +268,39 @@
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1">Categoría</label>
                         <select id="input-category" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 text-sm text-slate-100 rounded-xl p-3 outline-none transition-all cursor-pointer">
+                            <option value="suscripciones">Suscripciones</option>
                             <option value="alimentacion">Alimentación</option>
                             <option value="vivienda">Vivienda / Servicios</option>
                             <option value="nomina">Ingresos / Nómina</option>
                             <option value="ocio">Ocio / Deporte</option>
                             <option value="transporte">Transporte</option>
-                            <option value="suscripciones">Suscripciones</option>
                             <option value="otros">Otros</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Fecha -->
+                <!-- Fecha y Opción Recurrente -->
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Fecha</label>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Fecha de Cobro/Pago</label>
                     <input type="date" id="input-date" required class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 text-sm text-slate-100 rounded-xl p-3 outline-none transition-all">
                 </div>
 
+                <!-- CAMPO RECURRENTE / SUSCRIPCIÓN -->
+                <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 text-indigo-400"></i>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-200">¿Es un pago/ingreso mensual?</p>
+                            <p class="text-[10px] text-slate-400">Se repetirá automáticamente cada mes</p>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="input-is-recurring" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+
+                <!-- Botones de Acción -->
                 <div class="flex items-center justify-end space-x-3 pt-3">
                     <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
                         Cancelar
@@ -286,38 +313,37 @@
         </div>
     </div>
 
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // CLAVE TOTALMENTE NUEVA Y LIMPIA
-        const STORAGE_KEY = 'finances_v3_clean';
         const DEFAULT_TRANSACTIONS = [];
 
         const CATEGORY_ICONS = {
+            suscripciones: 'tv',
             alimentacion: 'shopping-cart',
             vivienda: 'home',
             nomina: 'briefcase',
             ocio: 'gamepad-2',
             transporte: 'car',
-            suscripciones: 'tv',
             otros: 'tag'
         };
 
         const CATEGORY_NAMES = {
+            suscripciones: 'Suscripciones',
             alimentacion: 'Alimentación',
             vivienda: 'Vivienda',
             nomina: 'Nómina',
             ocio: 'Ocio',
             transporte: 'Transporte',
-            suscripciones: 'Suscripciones',
             otros: 'Otros'
         };
 
         const CATEGORY_COLORS = {
+            suscripciones: 'bg-rose-500',
             alimentacion: 'bg-amber-500',
             vivienda: 'bg-indigo-500',
             nomina: 'bg-emerald-500',
             ocio: 'bg-purple-500',
             transporte: 'bg-blue-500',
-            suscripciones: 'bg-rose-500',
             otros: 'bg-slate-500'
         };
 
@@ -326,30 +352,67 @@
         window.onload = function() {
             lucide.createIcons();
 
-            // Cargar de manera 100% independiente con la nueva clave limpia
-            const saved = localStorage.getItem(STORAGE_KEY);
+            const saved = localStorage.getItem('finances_v4_recurring');
             if (saved) {
                 try {
                     transactions = JSON.parse(saved);
                 } catch(e) {
-                    transactions = [...DEFAULT_TRANSACTIONS];
+                    transactions = [];
                 }
             } else {
-                transactions = [...DEFAULT_TRANSACTIONS];
+                transactions = [];
                 saveToLocalStorage();
             }
+
+            processRecurringTransactions();
 
             document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
             renderApp();
         };
 
         function saveToLocalStorage() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+            localStorage.setItem('finances_v4_recurring', JSON.stringify(transactions));
+        }
+
+        // Procesa la repetición automática mensual de suscripciones
+        function processRecurringTransactions() {
+            const today = new Date();
+            const currentMonth = today.toISOString().slice(0, 7); // "YYYY-MM"
+
+            const recurrings = transactions.filter(t => t.isRecurring);
+
+            recurrings.forEach(item => {
+                const itemDate = new Date(item.date);
+                const itemDay = String(itemDate.getDate()).padStart(2, '0');
+                const targetDate = `${currentMonth}-${itemDay}`;
+
+                // Verificar si ya existe este movimiento creado para este mes
+                const alreadyExists = transactions.some(t => 
+                    t.recurringParentId === item.id && t.date.startsWith(currentMonth)
+                );
+
+                if (!alreadyExists && targetDate <= today.toISOString().split('T')[0]) {
+                    const newAutoTransaction = {
+                        id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+                        concept: `${item.concept} (Recurrente)`,
+                        amount: item.amount,
+                        category: item.category,
+                        date: targetDate,
+                        type: item.type,
+                        isRecurring: false,
+                        recurringParentId: item.id
+                    };
+                    transactions.unshift(newAutoTransaction);
+                }
+            });
+
+            saveToLocalStorage();
         }
 
         function renderApp() {
             calculateTotals();
             renderCategoryDistribution();
+            renderSubscriptionsList();
             renderTransactionsList();
             lucide.createIcons();
         }
@@ -389,6 +452,54 @@
             } else {
                 ratioLabel.textContent = expenses > 0 ? 'Gastos sin ingresos registrados' : '0% Gastado';
             }
+        }
+
+        function renderSubscriptionsList() {
+            const list = document.getElementById('subscriptions-list');
+            const countBadge = document.getElementById('recurring-count');
+            const recurrings = transactions.filter(t => t.isRecurring);
+
+            countBadge.textContent = `${recurrings.length} fija${recurrings.length !== 1 ? 's' : ''}`;
+
+            if (recurrings.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-2">No tienes suscripciones ni gastos fijos automáticos registrados.</p>`;
+                return;
+            }
+
+            list.innerHTML = recurrings.map(item => `
+                <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                            <i data-lucide="${CATEGORY_ICONS[item.category] || 'refresh-cw'}" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-200">${escapeHTML(item.concept)}</p>
+                            <p class="text-[10px] text-slate-400">Día ${new Date(item.date).getDate()} de cada mes</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold ${item.type === 'income' ? 'text-emerald-400' : 'text-red-400'}">
+                            ${item.type === 'income' ? '+' : '-'}${formatCurrency(item.amount)}
+                        </span>
+                        <button onclick="toggleRecurringStatus('${item.id}')" title="Desactivar recurrencia" class="p-1 text-slate-500 hover:text-red-400">
+                            <i data-lucide="power" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleSubscriptionsPanel() {
+            const container = document.getElementById('subscriptions-container');
+            const chevron = document.getElementById('sub-chevron');
+            container.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-180');
+        }
+
+        function toggleRecurringStatus(id) {
+            transactions = transactions.map(t => t.id === id ? { ...t, isRecurring: false } : t);
+            saveToLocalStorage();
+            renderApp();
         }
 
         function renderCategoryDistribution() {
@@ -477,7 +588,10 @@
                             </div>
 
                             <div class="truncate">
-                                <h4 class="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors truncate">${escapeHTML(t.concept)}</h4>
+                                <div class="flex items-center gap-1.5">
+                                    <h4 class="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors truncate">${escapeHTML(t.concept)}</h4>
+                                    ${t.isRecurring ? '<span title="Suscripción/Recurrente activa" class="p-1 rounded-md bg-indigo-500/20 text-indigo-400 text-[10px] font-bold"><i data-lucide="refresh-cw" class="w-3 h-3"></i></span>' : ''}
+                                </div>
                                 <div class="flex items-center gap-2 mt-0.5">
                                     <span class="text-xs text-slate-400 font-medium">${CATEGORY_NAMES[t.category] || 'Otro'}</span>
                                     <span class="text-slate-600 text-[10px]">•</span>
@@ -523,6 +637,7 @@
             document.getElementById('edit-id').value = '';
             document.getElementById('transaction-form').reset();
             document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('input-is-recurring').checked = false;
             setTransactionType('expense');
 
             document.getElementById('modal-title').querySelector('span').textContent = 'Nuevo Movimiento';
@@ -545,6 +660,7 @@
             document.getElementById('input-amount').value = item.amount;
             document.getElementById('input-category').value = item.category;
             document.getElementById('input-date').value = item.date;
+            document.getElementById('input-is-recurring').checked = !!item.isRecurring;
             setTransactionType(item.type);
 
             document.getElementById('modal-title').querySelector('span').textContent = 'Editar Movimiento';
@@ -577,11 +693,12 @@
             const category = document.getElementById('input-category').value;
             const date = document.getElementById('input-date').value;
             const type = document.getElementById('transaction-type').value;
+            const isRecurring = document.getElementById('input-is-recurring').checked;
 
             if (!concept || isNaN(amount) || amount <= 0) return;
 
             if (editId) {
-                transactions = transactions.map(t => t.id === editId ? { id: editId, concept, amount, category, date, type } : t);
+                transactions = transactions.map(t => t.id === editId ? { id: editId, concept, amount, category, date, type, isRecurring } : t);
             } else {
                 const newTransaction = {
                     id: Date.now().toString(),
@@ -589,7 +706,8 @@
                     amount,
                     category,
                     date,
-                    type
+                    type,
+                    isRecurring
                 };
                 transactions.unshift(newTransaction);
             }
@@ -634,9 +752,9 @@
         function exportToCSV() {
             if (transactions.length === 0) return;
 
-            let csvContent = "data:text/csv;charset=utf-8,ID,Concepto,Tipo,Monto,Categoria,Fecha\n";
+            let csvContent = "data:text/csv;charset=utf-8,ID,Concepto,Tipo,Monto,Categoria,Fecha,Recurrente\n";
             transactions.forEach(t => {
-                csvContent += `"${t.id}","${t.concept}","${t.type}",${t.amount},"${t.category}","${t.date}"\n`;
+                csvContent += `"${t.id}","${t.concept}","${t.type}",${t.amount},"${t.category}","${t.date}","${t.isRecurring ? 'Si' : 'No'}"\n`;
             });
 
             const encodedUri = encodeURI(csvContent);
