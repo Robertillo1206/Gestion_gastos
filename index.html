@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="es" class="h-full bg-slate-950">
 <head>
-    <head>
-  <!-- Icono para navegador y Android -->
-  <link rel="icon" type="image/png" href="IMG_9781.png">
-
-  <!-- Icono específico para iPhone / iPad -->
-  <link rel="apple-touch-icon" href="IMG_9781.png">
-</head>
-
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bloqueo absoluto de zoom y escala fija en dispositivos móviles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimum-scale=1.0">
     <title>Gestor de Finanzas Personal</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="IMG_9781.png">
+    <link rel="apple-touch-icon" href="IMG_9781.png">
+
+    <!-- Librerías Externas: Tailwind CSS, Lucide Icons e Inter/Plus Jakarta Sans -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
@@ -26,8 +26,18 @@
             }
         }
     </script>
+
     <style>
-        /* Estilos visuales personalizados para los fondos dinámicos */
+        /* Desactivar completamente gestos de zoom, selección e iteración de doble toque */
+        html, body {
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+            overscroll-behavior: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Estilos visuales dinámicos para el balance de la tarjeta */
         .card-positive {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(99, 102, 241, 0.15) 50%, rgba(15, 23, 42, 0.95) 100%), #0f172a;
             border: 1px solid rgba(16, 185, 129, 0.35);
@@ -58,18 +68,16 @@
         }
     </style>
 </head>
-<body class="h-full text-slate-100 font-sans antialiased bg-slate-950 flex flex-col min-h-screen">
+<body class="h-full text-slate-100 font-sans antialiased bg-slate-950 flex flex-col min-h-screen select-none">
 
-    <!-- Elementos de iluminación ambiental -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div id="glow-bg-1" class="bg-glow absolute -top-40 -left-40 w-96 h-96 bg-indigo-600 rounded-full blur-[128px] opacity-20"></div>
         <div id="glow-bg-2" class="bg-glow absolute top-1/2 -right-40 w-96 h-96 bg-emerald-600 rounded-full blur-[128px] opacity-20"></div>
     </div>
 
-    <!-- Contenedor Principal de la App -->
+    <!-- Contenedor Principal -->
     <div class="relative z-10 flex-1 flex flex-col max-w-4xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
         
-        <!-- HEADER -->
         <header class="flex justify-between items-center mb-6">
             <div class="flex items-center space-x-3">
                 <div class="p-2.5 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl text-indigo-400">
@@ -86,22 +94,18 @@
                     <i data-lucide="download" class="w-4 h-4"></i>
                     <span class="hidden sm:inline">Exportar CSV</span>
                 </button>
-                <button onclick="confirmReset()" title="Restablecer datos" class="p-2.5 bg-slate-900 hover:bg-red-500/20 text-slate-300 hover:text-red-400 rounded-xl border border-slate-800 hover:border-red-500/30 transition-all text-xs">
+                <button onclick="confirmReset()" title="Borrar todos los datos" class="p-2.5 bg-slate-900 hover:bg-red-500/20 text-slate-300 hover:text-red-400 rounded-xl border border-slate-800 hover:border-red-500/30 transition-all text-xs">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                 </button>
             </div>
         </header>
 
-        <!-- SECCIÓN 1: TARJETA DE RESUMEN FINANCIERO SIN DATOS DE TARJETA BANCARIA -->
         <section class="mb-6">
             <div id="balance-card" class="card-positive relative overflow-hidden rounded-3xl p-6 sm:p-8 transition-all duration-500">
-                
-                <!-- Efectos luminosos en esquinas -->
                 <div class="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
 
                 <div class="relative z-10 flex flex-col justify-between h-full space-y-6">
-                    
-                    <!-- Superior de la Tarjeta: Etiqueta de Estado y Fecha -->
+                    <!-- Superior de la Tarjeta -->
                     <div class="flex justify-between items-center">
                         <div class="flex items-center space-x-2">
                             <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase">Estado del Balance</span>
@@ -112,13 +116,13 @@
                         </div>
                     </div>
 
-                    <!-- Centro: Saldo Total Destacado -->
+                    <!-- Saldo Total -->
                     <div>
                         <p class="text-xs font-medium text-slate-400 tracking-wider uppercase mb-1">Saldo Total Disponible</p>
                         <h2 id="total-balance" class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">0,00 €</h2>
                     </div>
 
-                    <!-- Inferior: Desglose de Ingresos y Gastos Totales -->
+                    <!-- Desglose de Ingresos y Gastos -->
                     <div class="pt-4 border-t border-white/10 grid grid-cols-2 gap-4">
                         <div class="flex items-center space-x-3 bg-slate-950/40 p-3 rounded-2xl border border-white/5">
                             <div class="p-2 bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-emerald-400 flex-shrink-0">
@@ -145,7 +149,6 @@
             </div>
         </section>
 
-        <!-- SECCIÓN 2: DISTRIBUCIÓN POR CATEGORÍAS DE GASTOS -->
         <section class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 sm:p-5 mb-6 backdrop-blur-md">
             <div class="flex justify-between items-center mb-3">
                 <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -155,35 +158,29 @@
                 <span id="expenses-ratio-label" class="text-xs text-slate-400 font-medium">0% de ingresos consumidos</span>
             </div>
 
-            <!-- Contenedor del Gráfico de Barra Multicapa -->
+            <!-- Gráfico de Distribución -->
             <div id="category-bar-container" class="w-full bg-slate-950 h-3 rounded-full overflow-hidden flex gap-0.5 p-0.5 border border-slate-800/80 mb-3">
                 <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center text-[10px] text-slate-500">Sin gastos aún</div>
             </div>
 
-            <!-- Leyenda de Categorías -->
             <div id="category-legend" class="flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-400">
-                <!-- Se genera dinámicamente -->
+                <!-- Leyendas generadas dinámicamente -->
             </div>
         </section>
 
-        <!-- SECCIÓN 3: BARRA DE ACCIONES Y FILTROS -->
         <section class="mb-6 space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
-                <!-- Botón Principal para Añadir Transacción -->
                 <button onclick="openModal()" class="w-full sm:w-auto px-5 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-semibold rounded-2xl shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-95">
                     <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     <span>Nuevo Movimiento</span>
                 </button>
 
-                <!-- Filtros y Buscador -->
                 <div class="flex items-center gap-2 flex-1 sm:justify-end">
-                    <!-- Buscador -->
                     <div class="relative flex-1 sm:max-w-xs">
                         <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
                         <input type="text" id="search-input" oninput="filterTransactions()" placeholder="Buscar concepto..." class="w-full bg-slate-900 border border-slate-800 focus:border-indigo-500 text-sm text-slate-200 rounded-xl pl-9 pr-3 py-2.5 outline-none transition-all placeholder:text-slate-500">
                     </div>
 
-                    <!-- Select Filtro de Tipo -->
                     <select id="type-filter" onchange="filterTransactions()" class="bg-slate-900 border border-slate-800 focus:border-indigo-500 text-sm text-slate-300 rounded-xl px-3 py-2.5 outline-none transition-all cursor-pointer">
                         <option value="all">Todos</option>
                         <option value="income">Solo Ingresos</option>
@@ -193,7 +190,6 @@
             </div>
         </section>
 
-        <!-- SECCIÓN 4: HISTORIAL DE MOVIMIENTOS -->
         <section class="flex-1 flex flex-col">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-bold text-slate-300 flex items-center gap-2 uppercase tracking-wider">
@@ -203,24 +199,22 @@
                 <span id="transaction-count" class="text-xs bg-slate-900 border border-slate-800 text-slate-400 px-3 py-1 rounded-full font-medium">0 registros</span>
             </div>
 
-            <!-- Lista de Transacciones -->
             <div id="transactions-list" class="space-y-2.5 flex-1">
-                <!-- Se rellena con JS -->
+                <!-- Lista vacía de inicio -->
             </div>
 
-            <!-- Estado Vacío -->
+            <!-- Estado Vacío por Defecto -->
             <div id="empty-state" class="hidden flex-col items-center justify-center py-12 text-center bg-slate-900/40 border border-dashed border-slate-800/80 rounded-2xl my-2">
                 <div class="p-4 bg-slate-800/40 rounded-full text-slate-500 mb-3">
                     <i data-lucide="receipt" class="w-8 h-8"></i>
                 </div>
-                <p class="text-slate-300 font-medium">No se encontraron movimientos</p>
-                <p class="text-xs text-slate-500 mt-1 max-w-xs">Añade un ingreso o gasto para empezar a seguir tus registros.</p>
+                <p class="text-slate-300 font-medium">No hay ningún movimiento guardado</p>
+                <p class="text-xs text-slate-500 mt-1 max-w-xs">Haz clic en "Nuevo Movimiento" para empezar a registrar tus ingresos o gastos.</p>
             </div>
         </section>
 
     </div>
 
-    <!-- MODAL DE CREACIÓN / EDICIÓN DE MOVIMIENTOS -->
     <div id="modal-backdrop" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
         <div id="modal-container" class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl transform scale-95 transition-all duration-300">
             
@@ -237,7 +231,7 @@
             <form id="transaction-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
                 <input type="hidden" id="edit-id" value="">
 
-                <!-- Selector de Tipo -->
+                <!-- Tipo -->
                 <div class="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800">
                     <button type="button" id="btn-type-expense" onclick="setTransactionType('expense')" class="py-2.5 px-3 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all bg-red-500/20 text-red-400 border border-red-500/30">
                         <i data-lucide="arrow-down-right" class="w-4 h-4"></i> Gasto
@@ -251,10 +245,10 @@
                 <!-- Concepto -->
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Concepto / Descripción</label>
-                    <input type="text" id="input-concept" required placeholder="Ej. Compra semanal, Nómina, Factura..." class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 text-sm text-slate-100 rounded-xl p-3 outline-none transition-all">
+                    <input type="text" id="input-concept" required placeholder="Ej. Compra, Nómina, Restaurante..." class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 text-sm text-slate-100 rounded-xl p-3 outline-none transition-all">
                 </div>
 
-                <!-- Importe y Categoría -->
+                <!-- Monto y Categoría -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1">Importe (€)</label>
@@ -280,7 +274,6 @@
                     <input type="date" id="input-date" required class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 text-sm text-slate-100 rounded-xl p-3 outline-none transition-all">
                 </div>
 
-                <!-- Botones de Acción -->
                 <div class="flex items-center justify-end space-x-3 pt-3">
                     <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
                         Cancelar
@@ -293,18 +286,11 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Datos por defecto si el usuario entra por primera vez
-        const DEFAULT_TRANSACTIONS = [
-            { id: '1', concept: 'Nómina Trabajo', amount: 2300.00, type: 'income', category: 'nomina', date: new Date().toISOString().split('T')[0] },
-            { id: '2', concept: 'Supermercado', amount: 92.40, type: 'expense', category: 'alimentacion', date: new Date().toISOString().split('T')[0] },
-            { id: '3', concept: 'Alquiler / Hipoteca', amount: 750.00, type: 'expense', category: 'vivienda', date: new Date().toISOString().split('T')[0] },
-            { id: '4', concept: 'Gimnasio', amount: 35.00, type: 'expense', category: 'ocio', date: new Date().toISOString().split('T')[0] },
-            { id: '5', concept: 'Streaming / Música', amount: 17.99, type: 'expense', category: 'suscripciones', date: new Date().toISOString().split('T')[0] }
-        ];
+        // CLAVE TOTALMENTE NUEVA Y LIMPIA
+        const STORAGE_KEY = 'finances_v3_clean';
+        const DEFAULT_TRANSACTIONS = [];
 
-        // Mapeo de Iconos por Categoría
         const CATEGORY_ICONS = {
             alimentacion: 'shopping-cart',
             vivienda: 'home',
@@ -340,8 +326,8 @@
         window.onload = function() {
             lucide.createIcons();
 
-            // Cargar desde LocalStorage
-            const saved = localStorage.getItem('finances_data_v2');
+            // Cargar de manera 100% independiente con la nueva clave limpia
+            const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 try {
                     transactions = JSON.parse(saved);
@@ -354,12 +340,11 @@
             }
 
             document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
-
             renderApp();
         };
 
         function saveToLocalStorage() {
-            localStorage.setItem('finances_data_v2', JSON.stringify(transactions));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
         }
 
         function renderApp() {
@@ -380,12 +365,10 @@
 
             const balance = income - expenses;
 
-            // Actualizar textos
             document.getElementById('total-balance').textContent = formatCurrency(balance);
             document.getElementById('total-income').textContent = '+' + formatCurrency(income);
             document.getElementById('total-expenses').textContent = '-' + formatCurrency(expenses);
 
-            // Reacción visual dinámica según si el balance es positivo o negativo
             const balanceCard = document.getElementById('balance-card');
             const statusBadge = document.getElementById('status-badge');
 
@@ -399,7 +382,6 @@
                 statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Balance Positivo`;
             }
 
-            // Ratio de gastos respecto a ingresos
             const ratioLabel = document.getElementById('expenses-ratio-label');
             if (income > 0) {
                 const percentage = Math.round((expenses / income) * 100);
@@ -422,13 +404,11 @@
                 return;
             }
 
-            // Agrupar gastos por categoría
             const catMap = {};
             expenses.forEach(t => {
                 catMap[t.category] = (catMap[t.category] || 0) + parseFloat(t.amount);
             });
 
-            // Generar barra dividida dinámicamente
             let barHtml = '';
             let legendHtml = '';
 
@@ -669,8 +649,8 @@
         }
 
         function confirmReset() {
-            if (confirm("¿Deseas restablecer los movimientos por defecto?")) {
-                transactions = [...DEFAULT_TRANSACTIONS];
+            if (confirm("¿Deseas eliminar todos los registros guardados?")) {
+                transactions = [];
                 saveToLocalStorage();
                 renderApp();
             }
